@@ -34,6 +34,7 @@ seuil = 55
 st.write("Seuil définit par l'institution :", seuil)
 st.header('Score attribué au client :' )
 
+
 #left side get id
 def get_id():
     st.sidebar.header("Renseignements Client")
@@ -73,15 +74,16 @@ score = int(response.json()['proba']*100)
 
 distance = score - seuil
 if distance < -15 :
-    couleur = 'tomato'
+    couleur = 'seagreen'
 elif -15 < distance < 0 :
-    couleur = 'darkorange'
+    couleur = 'cornflowerblue'
 elif distance == 0:
-   couleur = 'cornflowerblue'
+    couleur = 'darkorange'
 elif 0 < distance < 15:
     couleur = 'gold'
 elif 15 < distance:
-    couleur = 'seagreen'
+    couleur = 'tomato'
+
 
 
 options = {
@@ -111,11 +113,22 @@ options = {
 
 st_echarts(options=options, width="100%", key=0)
 
+st.markdown("<h1 style='text-align: center; color: white;; font-size:15px;'>Probabilité de défaut </h1>", unsafe_allow_html=True)
+
+
 
 #Taking information about the client selected
 df_client = df_api[df_api['SK_ID_CURR'] == response.json()["SK_ID_CURR"]]
 
+#calcul proba for all client
+df_proba = model_pip.predict_proba(df_api.iloc[:,3:])
 
+proba = []
+for i in range(len(df_proba)):
+    prob = df_proba[i][1]
+    proba.append(prob)
+
+df_api['proba_default'] = proba
 
 
 cols = ['NAME_EDUCATION_TYPE', 'NAME_HOUSING_TYPE', 'NAME_FAMILY_STATUS', 'NAME_INCOME_TYPE', 'OCCUPATION_TYPE']
@@ -197,16 +210,18 @@ st.pyplot()
 
 st.subheader("Graphique :")
 
+st.markdown("<h1 style='text-align: center; color: white;; font-size:15px;'> Choisir deux features pour afficher leurs distributions : </h1>", unsafe_allow_html=True)
+
+
 col1, col2, col3 = st.columns(3)
 with col1:
-    feat1 = st.selectbox("Select the Job", pd.unique(feat_names), key= 0)
+    feat1 = st.selectbox("Features 1", pd.unique(feat_names), key= 0)
 with col2:
-    feat2 = st.selectbox("Select the Job", pd.unique(feat_names), key=1)
-with col3:
-    feat3 = st.selectbox("Select the Job", pd.unique(feat_names), key=2)
+    feat2 = st.selectbox("Features 2", pd.unique(feat_names), key=1)
 
-import streamlit as st
-import plotly.express as px
+#feat3 = st.selectbox("Choix", pd.unique(df_api.columns), key=2)
+feat3 = 'proba_default'
+
 import seaborn as sns
 
 #1er graph
@@ -225,13 +240,8 @@ sns.scatterplot(data = df_client, x=feat2,y= yL, ax=ax2, color='r')
 st.pyplot()
 
 #3eme graph analyse bivarié
-sns.scatterplot(data= df_api, x=feat1, y= feat2, hue = feat3)
+fig, ax = plt.subplots()
+sns.scatterplot(data= df_api, x=feat1, y= feat2,ax = ax,  hue = feat3)
+ax2 = ax.twinx()
+sns.scatterplot(data = df_client, x=feat1,y= yL, ax=ax2, color='r')
 st.pyplot()
-
-#git add .git
-#git commit -m "ton message"
-#git push origin main
-###############
-et inverser la proba car il sagitdune proba de defaut
-calculer la proba pour defaut pour tous les clients et hue = proba pour avoir un dégradé de couleur
-ajouter le client
