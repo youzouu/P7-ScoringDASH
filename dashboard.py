@@ -18,9 +18,9 @@ from pyecharts import options #to show progress
 
 #import dataframe and model
 
-df_api = pd.read_csv('../model/df_api.csv') #data
+df_api = pd.read_csv('df_api.csv') #data
 
-model_pip = pc.load(open('../model/model_pip.pkl', 'rb')) #model
+model_pip = pc.load(open('model_pip.pkl', 'rb')) #model
 
 #st.set_page_config(layout="wide")
 
@@ -39,7 +39,7 @@ st.header('Score attribué au client :' )
 def get_id():
     st.sidebar.header("Renseignements Client")
     id_curr = st.sidebar.text_input("ID client")
-    Base = 'http://127.0.0.1:5000'
+    Base = 'http://younes-scoring-api.herokuapp.com'
     #st.sidebar.button('Entrer')
     result = id_curr.title()
     reponse= requests.get(Base + "/score/" + result)
