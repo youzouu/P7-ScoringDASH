@@ -8,6 +8,8 @@ from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 from streamlit_echarts import st_echarts
 import shap
+import seaborn as sns
+import sys
 
 
 shap.initjs()
@@ -31,16 +33,16 @@ st.write("Seuil définit par l'institution :", seuil)
 st.header('Score attribué au client :' )
 
 
-
+result_default = 100002
 #left side get id
 def get_id():
     st.sidebar.header("Renseignements Client")
     id_curr = st.sidebar.text_input("ID client")
-    Base = 'https://younes-scoring-api.herokuapp.com'
+    Base = 'http://127.0.0.1:5000'
+    #Base = 'https://younes-scoring-api.herokuapp.com'
     #st.sidebar.button('Entrer')
     result = id_curr.title()
     reponse= requests.get(Base + "/score/" + result)
-
     if reponse.status_code != 200:
         return('Aucun client trouver')
     else:
@@ -63,8 +65,11 @@ st.markdown(
 try:
     response.json()
 except AttributeError:
-    st.header('MESSAGE:')
-    st.write('Le numéro client renseigné est inexistant')
+    st.header('MESSAGE IMPORTANT: Le numéro client renseigné est inexistant')
+    st.write('Les information suviantes sont les informations par défaut ')
+    Base = 'http://127.0.0.1:5000'
+    response= requests.get(Base+ "/score/" + str(result_default))
+
 
 #get proba
 
@@ -220,7 +225,6 @@ with col2:
 #feat3 = st.selectbox("Choix", pd.unique(df_api.columns), key=2)
 feat3 = 'proba_default'
 
-import seaborn as sns
 
 #1er graph
 yL = [0]
