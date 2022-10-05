@@ -1,33 +1,29 @@
-from idlelib import tooltip
-import numpy as np
-import requests
 import pandas as pd
-import requests, json
+import requests
 import streamlit as st
 from PIL import Image
 import pickle as pc
 import streamlit.components.v1 as components
-from altair.examples.scatter_with_minimap import detail
 from matplotlib import pyplot as plt
-from pandas.core import series
 from sklearn.model_selection import train_test_split
 from streamlit_echarts import st_echarts
 import shap
+
+
 shap.initjs()
-from pyecharts import options #to show progress
 
 #import dataframe and model
 
 df_api = pd.read_csv('df_api.csv') #data
 
-model_pip = pc.load(open('model_pip.pkl', 'rb')) #model
+model_pip = pc.load(open('model_pipe.pkl', 'rb'))
 
 #st.set_page_config(layout="wide")
 
 st.markdown("<h1 style='text-align: center; color: white;'>Prêt à dépenser : Demande de crédit</h1>", unsafe_allow_html=True)
 
 #import the logo of startup
-image = Image.open('../image/pad.png')
+image = Image.open('pad.png')
 st.sidebar.image(image, width = 250)
 
 seuil = 55
@@ -35,11 +31,12 @@ st.write("Seuil définit par l'institution :", seuil)
 st.header('Score attribué au client :' )
 
 
+
 #left side get id
 def get_id():
     st.sidebar.header("Renseignements Client")
     id_curr = st.sidebar.text_input("ID client")
-    Base = 'http://younes-scoring-api.herokuapp.com'
+    Base = 'https://younes-scoring-api.herokuapp.com'
     #st.sidebar.button('Entrer')
     result = id_curr.title()
     reponse= requests.get(Base + "/score/" + result)
@@ -70,6 +67,7 @@ except AttributeError:
     st.write('Le numéro client renseigné est inexistant')
 
 #get proba
+
 score = int(response.json()['proba']*100)
 
 distance = score - seuil
