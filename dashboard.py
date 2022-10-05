@@ -38,8 +38,8 @@ result_default = 100002
 def get_id():
     st.sidebar.header("Renseignements Client")
     id_curr = st.sidebar.text_input("ID client")
-    Base = 'http://127.0.0.1:5000'
-    #Base = 'https://younes-scoring-api.herokuapp.com'
+    #Base = 'http://127.0.0.1:5000' #local URL
+    Base = 'https://younes-scoring-api.herokuapp.com' #cloud URL
     #st.sidebar.button('Entrer')
     result = id_curr.title()
     reponse= requests.get(Base + "/score/" + result)
