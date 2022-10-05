@@ -66,8 +66,8 @@ try:
     response.json()
 except AttributeError:
     st.header('MESSAGE IMPORTANT: Le numéro client renseigné est inexistant')
-    st.write('Les information suviantes sont les informations par défaut ')
-    Base = 'http://127.0.0.1:5000'
+    st.write('Les information suivantes sont des informations par défaut ')
+    Base = 'https://younes-scoring-api.herokuapp.com'
     response= requests.get(Base+ "/score/" + str(result_default))
 
 
